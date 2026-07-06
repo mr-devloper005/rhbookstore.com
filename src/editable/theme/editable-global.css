@@ -1,22 +1,19 @@
 /*
-  Editable global theme layer.
+  Editable global theme layer — mapped from nerdstack-template.webflow.io.
 
   Safe for UI editors / AI tools:
-  - Full site background
-  - Global text color
-  - Editable-only typography
+  - Full site background (warm cream paper)
+  - Global text color (warm near-black ink)
+  - Editable-only typography (Space Grotesk display / Inter body / Fragment Mono labels)
   - Selection color
   - Scrollbar feel
+  - Scroll-reveal motion utilities
   - Article body typography accents
 
   Do not add data fetching, scripts, or route logic here.
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
-/* Per-task display + body typefaces (consumed via task-themes.ts). */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&family=Syne:wght@500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Fragment+Mono:ital@0;1&display=swap');
 
 body {
   background-color: var(--slot4-page-bg) !important;
@@ -25,21 +22,22 @@ body {
 }
 
 .editable-site-root {
-  /* Yelp-style clean sans, used for both display and body. */
-  --editable-font-display: 'Inter', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  /* Nerdstack pairing: Space Grotesk display, Inter body, Fragment Mono labels. */
+  --editable-font-display: 'Space Grotesk', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   --editable-font-body: 'Inter', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
-  /* Premium easing curve used across every hover + transition. */
+  --editable-font-mono: 'Fragment Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  /* Refined ease-out curve used across every hover + transition. */
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   font-family: var(--editable-font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 /*
   Site-wide premium motion.
-
   1. Unify the easing of every existing transition/hover to one refined curve.
   2. Add a smooth "post open" entry animation that replays on each navigation
      (driven by EditablePageMotion remounting the content per route).
-  Durations stay defined per-component via Tailwind utilities.
 */
 .editable-site-root *,
 .editable-site-root *::before,
@@ -58,16 +56,39 @@ body {
   }
 }
 
-/* The content region rises + fades on open; `backwards` clears the transform
-   afterwards so sticky sidebars keep working. */
 .editable-enter > * {
   animation: editable-enter 0.6s var(--ease-premium) backwards;
   will-change: transform, opacity;
 }
 
+/*
+  Scroll reveal — IntersectionObserver driven (EditableReveal.tsx toggles
+  `.is-visible`). Hidden state is only applied AFTER mount (via the
+  `data-reveal-ready` gate) so JS-off visitors see content immediately.
+*/
+.editable-reveal[data-reveal-ready='true'] {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition:
+    opacity 0.72s var(--ease-premium),
+    transform 0.72s var(--ease-premium);
+  will-change: opacity, transform;
+}
+
+.editable-reveal[data-reveal-ready='true'].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .editable-enter > * {
     animation: none;
+  }
+  .editable-reveal[data-reveal-ready='true'],
+  .editable-reveal[data-reveal-ready='true'].is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
   .editable-site-root *,
   .editable-site-root *::before,
@@ -86,6 +107,10 @@ body {
   letter-spacing: -0.02em;
 }
 
+.editable-mono {
+  font-family: var(--editable-font-mono);
+}
+
 .editable-site-root p,
 .editable-site-root li,
 .editable-site-root input,
@@ -97,25 +122,27 @@ body {
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--slot4-accent-fill) 28%, transparent);
+  background: color-mix(in oklab, var(--slot4-accent-fill) 30%, transparent);
   color: var(--slot4-page-text);
 }
 
 ::-webkit-scrollbar-track {
-  background: color-mix(in oklab, var(--slot4-page-bg) 88%, black);
+  background: color-mix(in oklab, var(--slot4-page-bg) 92%, black);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: color-mix(in oklab, var(--slot4-accent) 45%, transparent);
+  background: color-mix(in oklab, var(--slot4-accent) 55%, transparent);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in oklab, var(--slot4-accent) 68%, transparent);
+  background: color-mix(in oklab, var(--slot4-accent) 75%, transparent);
 }
 
-.article-content h2 {
-  color: var(--slot4-accent);
+.article-content h2,
+.article-content h3 {
+  color: var(--slot4-page-text);
+  font-family: var(--editable-font-display);
 }
 
 .article-content a {
