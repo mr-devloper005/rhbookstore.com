@@ -1,76 +1,65 @@
 'use client'
 
-import { Building2, FileText, Image as ImageIcon, Mail, MapPin, Phone, Sparkles, Bookmark } from 'lucide-react'
+import { Building2, FileText, Library, Mail, MapPin, Phone, Sparkles } from 'lucide-react'
 import { pagesContent } from '@/editable/content/pages.content'
-import { getFactoryState } from '@/design/factory/get-factory-state'
-import { getProductKind } from '@/design/factory/get-product-kind'
 import { EditableContactLeadForm } from '@/editable/components/EditableContactLeadForm'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
+import { EditableReveal } from '@/editable/shell/EditableReveal'
+import { pastelFor } from '@/editable/cards/PostCards'
 
-const tone = {
-  shell: 'bg-[var(--slot4-page-bg)] text-[var(--slot4-page-text)]',
-  panel: 'border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)]',
-  soft: 'border border-[var(--editable-border)] bg-[var(--slot4-panel-bg)]',
-  muted: 'text-[var(--slot4-muted-text)]',
-  action: 'bg-[var(--slot4-accent-fill)] text-[var(--slot4-on-accent)] hover:opacity-90',
-}
-
-function getLanes(kind: ReturnType<typeof getProductKind>) {
-  if (kind === 'directory') {
-    return [
-      { icon: Building2, title: 'Business onboarding', body: 'Add listings, verify operational details, and bring your business surface live quickly.' },
-      { icon: Phone, title: 'Partnership support', body: 'Talk through bulk publishing, local growth, and operational setup questions.' },
-      { icon: MapPin, title: 'Coverage requests', body: 'Need a new geography or category lane? We can shape the directory around it.' },
-    ]
-  }
-  if (kind === 'editorial') {
-    return [
-      { icon: FileText, title: 'Editorial submissions', body: 'Pitch essays, columns, and long-form ideas that fit the publication.' },
-      { icon: Mail, title: 'Newsletter partnerships', body: 'Coordinate sponsorships, collaborations, and issue-level campaigns.' },
-      { icon: Sparkles, title: 'Contributor support', body: 'Get help with voice, formatting, and publication workflow questions.' },
-    ]
-  }
-  if (kind === 'visual') {
-    return [
-      { icon: ImageIcon, title: 'Creator collaborations', body: 'Discuss gallery launches, creator features, and visual campaigns.' },
-      { icon: Sparkles, title: 'Licensing and use', body: 'Reach out about usage rights, commercial requests, and visual partnerships.' },
-      { icon: Mail, title: 'Media kits', body: 'Request creator decks, editorial support, or visual feature placement.' },
-    ]
-  }
-  return [
-    { icon: Bookmark, title: 'Collection submissions', body: 'Suggest resources, boards, and links that deserve a place in the library.' },
-    { icon: Mail, title: 'Resource partnerships', body: 'Coordinate curation projects, reference pages, and link programs.' },
-    { icon: Sparkles, title: 'Curator support', body: 'Need help organizing shelves, collections, or profile-connected boards?' },
-  ]
-}
+// Lanes framed for the Local Directory + Reference Library platform purpose.
+const lanes = [
+  { icon: Building2, title: 'Directory submissions', body: 'Add a new place, correct a detail, or request verification for an entry in the local directory.' },
+  { icon: Library, title: 'Reference contributions', body: 'Share reports, guides, and reference files to publish in the library.' },
+  { icon: MapPin, title: 'Coverage requests', body: 'Ask for a new city, category, or reference collection — we shape the platform around real needs.' },
+  { icon: Sparkles, title: 'Partnerships', body: 'Talk about bulk publishing, community programs, and long-term collaborations.' },
+  { icon: FileText, title: 'Editorial notes', body: 'Feedback on tone, structure, or specific content that could be sharper.' },
+  { icon: Phone, title: 'General support', body: 'Anything else that doesn\'t fit above — an actual human replies.' },
+]
 
 export default function ContactPage() {
-  const { recipe } = getFactoryState()
-  const productKind = getProductKind(recipe)
-  const lanes = getLanes(productKind)
-
   return (
-    <EditableSiteShell className={tone.shell}>
-      <main className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <section className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--slot4-accent)]">{pagesContent.contact.eyebrow}</p>
-            <h1 className="editable-display mt-4 text-5xl font-semibold tracking-[-0.02em]">{pagesContent.contact.title}</h1>
-            <p className={`mt-5 max-w-2xl text-sm leading-8 ${tone.muted}`}>{pagesContent.contact.description}</p>
-            <div className="mt-8 space-y-4">
-              {lanes.map((lane) => (
-                <div key={lane.title} className={`rounded-sm p-5 ${tone.soft}`}>
-                  <lane.icon className="h-5 w-5 text-[var(--slot4-accent)]" />
-                  <h2 className="editable-display mt-3 text-xl font-semibold">{lane.title}</h2>
-                  <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{lane.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+    <EditableSiteShell>
+      <main className="min-h-screen bg-[var(--slot4-page-bg)] text-[var(--slot4-page-text)]">
+        <section className="mx-auto max-w-[var(--editable-container)] px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-[7.5rem]">
+          <div className="grid gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+            <div>
+              <EditableReveal>
+                <p className="editable-mono text-[0.72rem] font-normal uppercase tracking-[0.18em] text-[var(--slot4-accent)]">◆ {pagesContent.contact.eyebrow}</p>
+                <h1 className="editable-display mt-6 text-balance text-[3rem] font-semibold leading-[1.02] tracking-[-0.03em] sm:text-[3.75rem] lg:text-[4.5rem]">{pagesContent.contact.title}</h1>
+                <p className="mt-6 max-w-xl text-lg leading-[1.6] text-[var(--slot4-muted-text)]">{pagesContent.contact.description}</p>
+              </EditableReveal>
 
-          <div className={`rounded-sm p-7 ${tone.panel}`}>
-            <h2 className="editable-display text-2xl font-semibold">{pagesContent.contact.formTitle}</h2>
-            <EditableContactLeadForm />
+              <div className="mt-10 grid gap-3 sm:grid-cols-2">
+                {lanes.map((lane, i) => (
+                  <EditableReveal key={lane.title} index={i}>
+                    <div className="rounded-[20px] border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] p-6">
+                      <span
+                        className="flex h-11 w-11 items-center justify-center rounded-lg text-[var(--slot4-page-text)]"
+                        style={{ backgroundColor: pastelFor(lane.title) }}
+                      >
+                        <lane.icon className="h-5 w-5" />
+                      </span>
+                      <h2 className="editable-display mt-4 text-lg font-semibold tracking-[-0.015em]">{lane.title}</h2>
+                      <p className="mt-2 text-sm leading-6 text-[var(--slot4-muted-text)]">{lane.body}</p>
+                    </div>
+                  </EditableReveal>
+                ))}
+              </div>
+            </div>
+
+            <EditableReveal index={1}>
+              <div className="rounded-[24px] border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] p-7 sm:p-9 lg:sticky lg:top-24">
+                <h2 className="editable-display text-2xl font-semibold tracking-[-0.02em]">{pagesContent.contact.formTitle}</h2>
+                <p className="mt-2 text-sm leading-6 text-[var(--slot4-muted-text)]">Tell us the lane and we'll route it to the right person.</p>
+                <div className="mt-6">
+                  <EditableContactLeadForm />
+                </div>
+                <div className="editable-mono mt-8 flex items-center gap-2 border-t border-[var(--editable-border)] pt-6 text-[0.65rem] font-normal uppercase tracking-[0.18em] text-[var(--slot4-muted-text)]">
+                  <Mail className="h-3.5 w-3.5" /> Replies typically within 48h
+                </div>
+              </div>
+            </EditableReveal>
           </div>
         </section>
       </main>

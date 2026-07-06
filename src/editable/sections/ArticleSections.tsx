@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import { ArrowRight, ChevronLeft } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import type { SitePost, SiteFeedPagination } from '@/lib/site-connector'
 import { CATEGORY_OPTIONS } from '@/lib/categories'
 import { taskPageVoices } from '@/editable/content/task-pages.content'
 import { pagesContent } from '@/editable/content/pages.content'
 import { editableDesignContract as dc, editablePalette as pal } from '@/editable/layouts/design-contract'
 import { ArticleListCard, postHref } from '@/editable/cards/PostCards'
+import { EditableReveal } from '@/editable/shell/EditableReveal'
 
 export function EditableArticleArchive({ posts, pagination, category = 'all', basePath = '/article' }: { posts: SitePost[]; pagination: SiteFeedPagination; category?: string; basePath?: string }) {
   const voice = taskPageVoices.article
@@ -13,36 +14,42 @@ export function EditableArticleArchive({ posts, pagination, category = 'all', ba
   const pageHref = (nextPage: number) => `${basePath}?${new URLSearchParams({ ...(category && category !== 'all' ? { category } : {}), page: String(nextPage) }).toString()}`
   return (
     <main className={dc.shell.page}>
-      <section className={`${dc.shell.section} pt-12 sm:pt-16 lg:pt-20`}>
-        <div className={`rounded-[2.5rem] border ${pal.border} ${pal.darkBg} p-7 text-white shadow-[0_24px_80px_rgba(24,20,17,0.18)] sm:p-10 lg:p-14`}>
-          <p className={`${dc.type.eyebrow} ${pal.accentSoftText}`}>{voice.eyebrow}</p>
-          <h1 className={`${dc.type.heroTitle} mt-5 max-w-5xl`}>{voice.headline}</h1>
-          <p className="mt-6 max-w-3xl text-base leading-8 text-white/72 sm:text-lg">{voice.description}</p>
-          <form action={basePath} className="mt-8 flex max-w-xl flex-col gap-3 sm:flex-row">
-            <select name="category" defaultValue={category || 'all'} className={`min-w-0 flex-1 rounded-full border ${pal.darkBorder} bg-white px-5 py-3 text-sm font-bold ${pal.panelText} outline-none`}>
+      <section className={`${dc.shell.section} pt-16 sm:pt-24 lg:pt-[6rem]`}>
+        <EditableReveal>
+          <p className={dc.type.eyebrow}>◆ {voice.eyebrow}</p>
+          <h1 className={`${dc.type.heroTitle} mt-6 max-w-4xl text-balance text-[var(--slot4-page-text)]`}>{voice.headline}</h1>
+          <p className={`mt-6 max-w-2xl text-lg leading-[1.65] ${pal.mutedText}`}>{voice.description}</p>
+        </EditableReveal>
+        <EditableReveal index={1}>
+          <form action={basePath} className="mt-10 flex max-w-xl flex-col gap-3 sm:flex-row">
+            <select name="category" defaultValue={category || 'all'} className={`editable-mono min-w-0 flex-1 rounded-lg border ${pal.border} bg-[var(--slot4-surface-bg)] px-5 py-3 text-[0.72rem] font-normal uppercase tracking-[0.16em] ${pal.panelText} outline-none`}>
               <option value="all">All categories</option>
               {CATEGORY_OPTIONS.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
             </select>
-            <button className={`rounded-full ${pal.accentSoftBg} px-6 py-3 text-sm font-black ${pal.panelText}`}>Filter</button>
+            <button className={dc.button.primary}>Filter</button>
           </form>
-        </div>
+        </EditableReveal>
       </section>
 
       <section className={`${dc.shell.section} ${dc.shell.sectionY}`}>
         {posts.length ? (
           <div className="grid gap-5">
-            {posts.map((post, index) => <ArticleListCard key={post.id} post={post} href={postHref('article', post, basePath)} index={index + (page - 1) * pagination.limit} />)}
+            {posts.map((post, index) => (
+              <EditableReveal key={post.id} index={index % 6}>
+                <ArticleListCard post={post} href={postHref('article', post, basePath)} index={index + (page - 1) * pagination.limit} />
+              </EditableReveal>
+            ))}
           </div>
         ) : (
           <div className={`${dc.surface.soft} p-8 text-center`}>
-            <h2 className="text-3xl font-black tracking-[-0.05em]">No articles found</h2>
-            <p className={`mt-3 text-sm leading-7 ${pal.softMutedText}`}>Try another category or return to all articles.</p>
+            <h2 className="editable-display text-2xl font-semibold tracking-[-0.015em]">No articles found</h2>
+            <p className={`mt-3 text-sm leading-7 ${pal.mutedText}`}>Try another category or return to all articles.</p>
           </div>
         )}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          {pagination.hasPrevPage ? <Link href={pageHref(page - 1)} className={`rounded-full border ${pal.border} bg-white px-5 py-3 text-sm font-black`}>Previous</Link> : null}
-          <span className={`rounded-full ${pal.darkBg} px-5 py-3 text-sm font-black text-white`}>Page {page} of {pagination.totalPages || 1}</span>
-          {pagination.hasNextPage ? <Link href={pageHref(page + 1)} className={`rounded-full border ${pal.border} bg-white px-5 py-3 text-sm font-black`}>Next</Link> : null}
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
+          {pagination.hasPrevPage ? <Link href={pageHref(page - 1)} className={`rounded-lg border ${pal.border} bg-[var(--slot4-surface-bg)] px-5 py-3 text-sm font-medium`}>Previous</Link> : null}
+          <span className={`editable-mono rounded-lg border ${pal.border} bg-[var(--slot4-surface-bg)] px-5 py-3 text-[0.7rem] font-normal uppercase tracking-[0.16em] ${pal.mutedText}`}>Page {page} of {pagination.totalPages || 1}</span>
+          {pagination.hasNextPage ? <Link href={pageHref(page + 1)} className={`rounded-lg border ${pal.border} bg-[var(--slot4-surface-bg)] px-5 py-3 text-sm font-medium`}>Next</Link> : null}
         </div>
       </section>
     </main>
@@ -53,24 +60,24 @@ export function EditableArticleDetailShell({ slug, post }: { slug: string; post:
   const voice = taskPageVoices.article
   return (
     <main className={dc.shell.page}>
-      <section className={`${dc.shell.section} pt-10 sm:pt-14 lg:pt-16`}>
-        <div className={`grid gap-6 rounded-[2.5rem] border ${pal.border} bg-white p-6 shadow-[0_24px_80px_rgba(24,20,17,0.08)] lg:grid-cols-[minmax(0,1fr)_320px] lg:p-10`}>
-          <div className="min-w-0">
-            <Link href="/article" className={`inline-flex items-center gap-2 rounded-full border ${pal.border} px-4 py-2 text-sm font-black ${pal.panelText}`}><ChevronLeft className="h-4 w-4" /> Articles</Link>
-            <p className={`${dc.type.eyebrow} mt-8 ${pal.accentText}`}>{voice.eyebrow}</p>
-            <h1 className={`mt-4 max-w-4xl text-4xl font-black leading-[0.98] tracking-[-0.07em] ${pal.panelText} sm:text-5xl lg:text-7xl`}>{post?.title || pagesContent.detailPages.article.fallbackTitle}</h1>
-          </div>
-          <aside className={`min-w-0 rounded-[2rem] ${pal.darkBg} p-6 text-white`}>
-            <p className={`${dc.type.eyebrow} ${pal.accentSoftText}`}>Reading note</p>
-            <p className="mt-4 text-sm leading-7 text-white/72">{voice.secondaryNote}</p>
-            <Link href="/contact" className={`mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black ${pal.panelText}`}>Contact <ArrowRight className="h-4 w-4" /></Link>
-          </aside>
-        </div>
+      <section className={`${dc.shell.section} pt-14 sm:pt-20`}>
+        <EditableReveal>
+          <Link href="/article" className="editable-mono inline-flex items-center gap-1.5 text-[0.7rem] font-normal uppercase tracking-[0.18em] text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">
+            <ArrowLeft className="h-3.5 w-3.5" /> Articles
+          </Link>
+          <p className={`mt-8 ${dc.type.eyebrow}`}>◆ {voice.eyebrow}</p>
+          <h1 className={`${dc.type.heroTitle} mt-6 max-w-4xl text-balance text-[var(--slot4-page-text)]`}>{post?.title || pagesContent.detailPages.article.fallbackTitle}</h1>
+        </EditableReveal>
       </section>
-      <section className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6 lg:px-8 lg:pb-24">
-        <div className={`rounded-[2.25rem] border ${pal.border} bg-white p-6 shadow-[0_24px_80px_rgba(24,20,17,0.08)] sm:p-8 lg:p-10`}>
-          <p className={`text-sm leading-8 ${pal.softMutedText}`}>{post?.summary || `Article detail content for ${slug} will render through the editable detail page.`}</p>
-        </div>
+      <section className="mx-auto w-full max-w-5xl px-6 pb-20 pt-6 sm:px-8 lg:px-10 lg:pb-28">
+        <EditableReveal index={1}>
+          <div className={`rounded-[24px] border ${pal.border} bg-[var(--slot4-surface-bg)] p-8 sm:p-10`}>
+            <p className={`text-base leading-8 ${pal.mutedText}`}>{post?.summary || `Article detail content for ${slug} will render through the editable detail page.`}</p>
+            <Link href="/contact" className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-[var(--slot4-page-text)]">
+              Get in touch <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </EditableReveal>
       </section>
     </main>
   )
